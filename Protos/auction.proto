@@ -1,0 +1,59 @@
+﻿syntax = "proto3";
+
+package RPCSampleApp.Services;
+
+service AuctionService {
+  rpc PlaceBid(BidRequest) returns (BidReply);
+  rpc InitializeAuction(AuctionInitializationRequest) returns (AuctionInitializationReply);
+  rpc NotifyBid(NotifyBidRequest) returns (NotifyBidReply);
+  rpc NotifyClosure(NotifyClosureRequest) returns (NotifyClosureReply);
+}
+
+// Message for placing a bid
+message BidRequest {
+  string bidder_name = 1;
+  int32 auction_item_id = 2;
+  int32 bid_amount = 3;
+}
+
+// Reply message for placing a bid
+message BidReply {
+  string message = 1;
+}
+
+// Message for initializing an auction
+message AuctionInitializationRequest {
+  string participant_name = 1;
+  string auction_item_name = 2;
+  int32 initial_price = 3;
+  // Additional fields
+  int32 initializer_id = 4;
+  int32 auction_item_id = 5;
+}
+
+// Reply message for initializing an auction
+message AuctionInitializationReply {
+  string message = 1;
+}
+
+// Message for notifying bids to participants
+message NotifyBidRequest {
+  string bidder_name = 1;
+  int32 bid_amount = 2;
+}
+
+// Reply message for notifying bids
+message NotifyBidReply {
+  string message = 1;
+}
+
+// Message for notifying closure of an auction
+message NotifyClosureRequest {
+  int32 auction_id = 1;
+  float closing_value = 2; // or double, depending on your requirements
+}
+
+// Reply message for notifying closure of an auction
+message NotifyClosureReply {
+  string message = 1;
+}
