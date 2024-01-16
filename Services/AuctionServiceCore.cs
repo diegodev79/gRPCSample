@@ -48,6 +48,10 @@ namespace RPCSampleApp.Services
                 };
 
                 // Add the bid to the auction item
+                if (auctionItem.Bids == null) 
+                {
+                    auctionItem.Bids = new List<Bid>();
+                }
                 auctionItem.Bids.Add(newBid);
 
                 // Save changes to the database
