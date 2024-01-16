@@ -76,23 +76,25 @@ namespace RPCSampleApp.Services
                 }
 
                 // Check if the auction item with the provided ID already exists
-                if (_dbContext.AuctionItems.Any(a => a.Id == request.AuctionItemId))
-                {
-                    return new AuctionInitializationReply { Message = "Auction item with the provided ID already exists." };
-                }
-
+               // if (_dbContext.AuctionItems.Any(a => a.Id == request.AuctionItemId))
+                //{
+               //    return new AuctionInitializationReply { Message = "Auction item with the provided ID already exists." };
+               // }
+                
                 // Create a new auction item
                 AuctionItem newAuctionItem = new AuctionItem
                 {
                     ItemName = request.AuctionItemName, // You may want to use a more descriptive property
                     InitialPrice = request.InitialPrice,
-                    InitiatorName = request.ParticipantName
+                    InitiatorName = request.ParticipantName,
+                    Id = request.AuctionItemId 
                 };
-
+                /*
+                 * Already created in DB
                 // Add the new auction item to the database
                 _dbContext.AuctionItems.Add(newAuctionItem);
                 await _dbContext.SaveChangesAsync();
-
+                */
                 _notificationService.NotifyParticipants($"New auction created: '{newAuctionItem.ItemName}'");
 
                 return new AuctionInitializationReply { Message = "Auction initialized successfully." };
