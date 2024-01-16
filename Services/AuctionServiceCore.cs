@@ -12,11 +12,13 @@ namespace RPCSampleApp.Services
     {
         private readonly ILogger<AuctionServiceCore> _logger;
         private readonly AuctionDbContext _dbContext;
+        private readonly NotificationService _notificationService;
 
-        public AuctionServiceCore(ILogger<AuctionServiceCore> logger, AuctionDbContext dbContext)
+        public AuctionServiceCore(ILogger<AuctionServiceCore> logger, AuctionDbContext dbContext, NotificationService notificationService)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _notificationService = notificationService;
         }
 
         public override async Task<BidReply> PlaceBid(BidRequest request, ServerCallContext context)
@@ -63,6 +65,7 @@ namespace RPCSampleApp.Services
 
 
         public override async Task<AuctionInitializationReply> InitializeAuction(AuctionInitializationRequest request, ServerCallContext context)
+       // public override async Task<AuctionInitializationReply> InitializeAuction(AuctionInitializationRequest request, ServerCallContext context)
         {
             try
             {
@@ -90,7 +93,10 @@ namespace RPCSampleApp.Services
                 _dbContext.AuctionItems.Add(newAuctionItem);
                 await _dbContext.SaveChangesAsync();
 
+                _notificationService.NotifyParticipants($"New auction created: '{newAuctionItem.ItemName}'");
+
                 return new AuctionInitializationReply { Message = "Auction initialized successfully." };
+                //return new AuctionInitializationReply { Message = "Auction initialized successfully." };
             }
             catch (Exception ex)
             {
@@ -137,6 +143,17 @@ namespace RPCSampleApp.Services
                 return Task.FromResult(new NotifyClosureReply { Message = "An error occurred while processing auction closure notification." });
             }
         }
+
+        public void AddParticipant(string participantName)
+        {
+            _notificationService.RegisterParticipant(participantName);
+        }
+
+        public void RemoveParticipant(string participantName)
+        {
+            _notificationService.UnregisterParticipant(participantName);
+        }
+
     }
 
 }

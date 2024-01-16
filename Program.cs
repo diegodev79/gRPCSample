@@ -19,13 +19,15 @@ namespace RPCSampleApp
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
+            var notificationService = new NotificationService();
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder =>
                 {
                     builder.AddConsole().SetMinimumLevel(LogLevel.Error);
                 })
-                .AddSingleton<IConfiguration>(configuration)  // Add IConfiguration
+                .AddSingleton<IConfiguration>(configuration)
+                .AddSingleton<NotificationService>(notificationService)
                 .AddDbContext<AuctionDbContext>((serviceProvider, options) =>
                 {
                     var config = serviceProvider.GetRequiredService<IConfiguration>(); // Get IConfiguration
@@ -38,12 +40,11 @@ namespace RPCSampleApp
 
             Console.WriteLine("Hello, Welcome to gRPC Auction Manager Sample by Diego Barrantes!");
 
-            string participantName = GetUniqueParticipantName(serviceProvider);
-
-            Console.WriteLine($"Welcome, {participantName}!");
-
+            string participantName = GetUniqueParticipantName(serviceProvider);           
 
             var auctionService = serviceProvider.GetRequiredService<AuctionServiceCore>();
+            auctionService.AddParticipant(participantName);
+            Console.WriteLine($"Welcome, {participantName}!");
 
 
             using (var scope = serviceProvider.CreateScope())
